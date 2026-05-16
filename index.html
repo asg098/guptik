@@ -1,0 +1,1567 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUPTIK</title>
+    <link rel="stylesheet" href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #333;
+        }
+
+        .hero {
+            height: 50vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            text-align: center;
+            background-image: url('newbackground1.jpg');
+            background-size: cover;
+            background-position: center;
+            animation: fadeIn 1.5s ease-in;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            font-weight: 300;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .events-section, .places-section, .search-section, .map-section {
+            background-color: #ffffff;
+            padding: 3rem 1rem;
+            border-radius: 12px;
+            margin: 1.5rem 0.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .destination-card, .event-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .destination-card:hover, .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .destination-card img, .event-card img {
+            height: 180px;
+            object-fit: cover;
+            width: 100%;
+            display: block;
+        }
+
+        .like-share-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .like-share-buttons button, .like-share-buttons a {
+            flex: 1 1 90px;
+            text-align: center;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: transform 0.2s ease, background-color 0.3s ease;
+            color: #ffffff;
+        }
+
+        .like-share-buttons button:hover, .like-share-buttons a:hover {
+            transform: scale(1.05);
+        }
+
+        .like-share-buttons .like-btn {
+            background-color: #ff4500;
+        }
+
+        .like-share-buttons .like-btn:hover {
+            background-color: #e63e00;
+        }
+
+        .like-share-buttons .share-btn {
+            background-color: #ff6200;
+        }
+
+        .like-share-buttons .share-btn:hover {
+            background-color: #e65a00;
+        }
+
+        .like-share-buttons .learn-more-btn {
+            background-color: #ff8c00;
+        }
+
+        .like-share-buttons .learn-more-btn:hover {
+            background-color: #e67e00;
+        }
+
+        .like-share-buttons .route-btn {
+            background-color: #ff6200;
+        }
+
+        .like-share-buttons .route-btn:hover {
+            background-color: #e65a00;
+        }
+
+        .footer {
+            background-color: #ff4500;
+            color: #ffffff;
+            padding: 2rem 1rem;
+        }
+
+        .footer a {
+            color: #ff8c00;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: #e67e00;
+        }
+
+        .tag {
+            display: inline-block;
+            background-color: #fff3e6;
+            color: #ff4500;
+            border-radius: 20px;
+            padding: 5px 10px;
+            margin: 4px;
+            font-size: 0.85rem;
+            transition: background-color 0.3s;
+        }
+
+        .tag:hover {
+            background-color: #ffe0cc;
+        }
+
+        .type-btn {
+            background-color: #ff8c00;
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            margin: 0.25rem;
+            font-size: 0.9rem;
+            transition: transform 0.2s ease, background-color 0.3s ease;
+        }
+
+        .type-btn:hover {
+            background-color: #e67e00;
+            transform: scale(1.05);
+        }
+
+        .type-btn.active {
+            background-color: #ff6200;
+        }
+
+        .locate-btn {
+            background-color: #ff6200;
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: transform 0.2s ease, background-color 0.3s ease;
+        }
+
+        .locate-btn:hover {
+            background-color: #e65a00;
+            transform: scale(1.05);
+        }
+
+        #map {
+            height: 350px;
+            width: 100%;
+            border-radius: 8px;
+            min-height: 300px;
+            border: 2px solid #ff4500;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .navbar {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .hamburger {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #ff4500;
+        }
+
+        .language-switcher select {
+            padding: 0.5rem;
+            border-radius: 8px;
+            background-color: #ff8c00;
+            color: #ffffff;
+            border: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .language-switcher select:hover {
+            background-color: #e67e00;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                height: 40vh;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1.25rem;
+            }
+
+            .events-section, .places-section, .search-section, .map-section {
+                padding: 2rem 0.5rem;
+                margin: 1rem 0.25rem;
+            }
+
+            .destination-card img, .event-card img {
+                height: 150px;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background-color: #ffffff;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                padding: 1rem;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .navbar .container {
+                flex-direction: row;
+                align-items: center;
+            }
+
+            .type-btn, .locate-btn {
+                padding: 0.5rem;
+                font-size: 0.8rem;
+            }
+
+            .like-share-buttons button, .like-share-buttons a {
+                flex: 1 1 80px;
+                font-size: 0.8rem;
+                padding: 0.4rem;
+            }
+
+            #map {
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .destination-card, .event-card {
+                margin: 0 0.5rem;
+            }
+
+            .like-share-buttons {
+                flex-direction: column;
+            }
+
+            .like-share-buttons button, .like-share-buttons a {
+                flex: 1 1 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <img src="logoog.jpg" alt="Maharashtra Explo Logo" class="h-36">
+            <div class="hamburger text-gray-700"><i class="fas fa-bars"></i></div>
+            <div class="flex items-center space-x-4">
+                <ul class="nav-links flex space-x-4 text-base">
+                    <li><button class="text-orange-600 hover:text-orange-800 transition font-semibold" data-key="nav_home" onclick="showAllPlaces()">Home</button></li>
+                    <li><button class="text-orange-600 hover:text-orange-800 transition font-semibold" data-key="nav_faves" onclick="showLikedPlaces()">Your Faves</button></li>
+                    <li><button class="text-orange-600 hover:text-orange-800 transition font-semibold" data-key="nav_trending" onclick="showTrendingPlaces()">Trending</button></li>
+                    <li><button class="text-orange-600 hover:text-orange-800 transition font-semibold" data-key="nav_recommendations" onclick="showRecommendedPlaces()">Recommendations</button></li>
+                    <li><button class="text-orange-600 hover:text-orange-800 transition font-semibold" data-key="nav_events" onclick="showEvents()">Events</button></li>
+                    <li><a href="https://shayadri.netlify.app/" class="text-orange-600 hover:text-orange-800 transition font-semibold" data-key="nav_ai_trip_planner">AI Trip Planner</a></li>
+                    <li><a href="https://travelonamaskarmaharashtra.netlify.app/" class="text-orange-600 hover:text-orange-800 transition font-semibold" data-key="nav_travelo">Travelo</a></li>
+                    <li><a href="https://aitripguide.netlify.app/" class="text-orange-600 hover:text-orange-800 transition font-semibold" data-key="nav_ai_trip_guide">AI Trip Guide</a></li>
+                    <li><a href="https://timelineviewer4926.netlify.app/" class="text-orange-600 hover:text-orange-800 transition font-semibold" dataಕey="nav_timeline_viewer">Timeline Viewer</a></li>
+                    <li><a href="https://adventuresimulator.netlify.app/" class="text-orange-600 hover:text-orange-800 transition font-semibold" data-key="nav_adventure_simulator">Adventure Simulator</a></li>
+                </ul>
+                <div class="language-switcher">
+                    <select id="languageSelect" onchange="changeLanguage(this.value)">
+                        <option value="en">English</option>
+                        <option value="hi">हिन्दी</option>
+                        <option value="mr">मराठी</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="text-center">
+            <h1 data-key="hero_title">GUPTIK</h1>
+            <p data-key="hero_subtitle">Discover Maharashtra’s Hidden Gems!</p>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="search-section container mx-auto px-4 py-6">
+        <div class="flex justify-center mb-4">
+            <input class="w-full md:w-3/4 lg:w-1/2 px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-600" data-key="search_placeholder" placeholder="Find your next adventure..." type="text" oninput="filterDestinations(this.value)" />
+        </div>
+        <div class="flex flex-wrap justify-center gap-2" id="tourism-types">
+            <button class="type-btn" data-key="type_all" onclick="filterByTourismType('')">All Vibes</button>
+            <button class="type-btn" data-key="type_cultural" onclick="filterByTourismType('cultural')">Cultural</button>
+            <button class="type-btn" data-key="type_historical" onclick="filterByTourismType('historical')">Historical</button>
+            <button class="type-btn" data-key="type_religious" onclick="filterByTourismType('religious')">Religious Spots</button>
+            <button class="type-btn" data-key="type_nature" onclick="filterByTourismType('nature')">Nature</button>
+            <button class="type-btn" data-key="type_adventure" onclick="filterByTourismType('adventure')">Adventure Zone</button>
+            <button class="type-btn" data-key="type_beach" onclick="filterByTourismType('beach')">Beach</button>
+            <button class="type-btn" data-key="type_hill_station" onclick="filterByTourismType('hill station')">Hill Station</button>
+            <button class="type-btn" data-key="type_urban" onclick="filterByTourismType('urban')">City Buzz</button>
+        </div>
+    </section>
+
+    <!-- Events Section -->
+    <section id="events-section" class="events-section">
+        <div class="container mx-auto px-4 py-6">
+            <h2 class="text-2xl font-bold text-center mb-6 text-orange-600" data-key="events_title">Upcoming Epic Events!</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" id="event-info"></div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section container mx-auto px-4 py-6">
+        <h2 class="text-2xl font-bold text-center mb-6 text-orange-600" data-key="map_title">Map Your Adventure</h2>
+        <div class="flex justify-center mb-4">
+            <button class="locate-btn" data-key="locate_button" onclick="locateUser()">Find Me</button>
+        </div>
+        <div class="w-full" id="map"></div>
+    </section>
+
+    <!-- Places Section -->
+    <section id="all-places" class="places-section">
+        <div class="container mx-auto px-4 py-6">
+            <h2 class="text-2xl font-bold text-center mb-6 text-orange-600" data-key="places_title">All Spots</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" id="destination-info"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container mx-auto px-4 text-center">
+            <p class="mb-2" data-key="footer_copyright">© 2025 GUPTIK. Let’s Explore Together!</p>
+            <div class="contact-form bg-orange-600 p-6 rounded-lg inline-block max-w-md w-full">
+                <h3 class="text-lg font-bold mb-4" data-key="footer_contact_title">Get in Touch!</h3>
+                <form id="contactForm" action="#" method="POST">
+                    <input class="w-full px-4 py-2 mb-4 border rounded-lg text-orange-600" type="text" name="name" data-key="footer_name_placeholder" placeholder="Your Name" required>
+                    <input class="w-full px-4 py-2 mb-4 border rounded-lg text-orange-600" type="email" name="email" data-key="footer_email_placeholder" placeholder="Your Email" required>
+                    <button class="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-700 transition w-full" type="submit" data-key="footer_submit">Send</button>
+                </form>
+                <p id="formMessage" class="mt-4"></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <script>
+        // Language translations
+        const translations = {
+            en: {
+                nav_home: "Home",
+                nav_faves: "Your Faves",
+                nav_trending: "Trending",
+                nav_recommendations: "Recommendations",
+                nav_events: "Events",
+                nav_ai_trip_planner: "AI Trip Planner",
+                nav_travelo: "Travelo",
+                nav_ai_trip_guide: "AI Trip Guide",
+                nav_timeline_viewer: "Timeline Viewer",
+                nav_adventure_simulator: "Adventure Simulator",
+                hero_title: "GUPTIK",
+                hero_subtitle: "Discover Maharashtra’s Hidden Gems!",
+                search_placeholder: "Find your next adventure...",
+                type_all: "All Vibes",
+                type_cultural: "Cultural",
+                type_historical: "Historical",
+                type_religious: "Religious Spots",
+                type_nature: "Nature",
+                type_adventure: "Adventure Zone",
+                type_beach: "Beach",
+                type_hill_station: "Hill Station",
+                type_urban: "City Buzz",
+                events_title: "Upcoming Epic Events!",
+                map_title: "Map Your Adventure",
+                locate_button: "Find Me",
+                places_title: "All Spots",
+                places_hot_now: "Hot Now",
+                places_best_picks: "Best Picks",
+                places_your_faves: "Your Faves",
+                places_spots_near_you: "Spots Near You",
+                places_no_spots: "No spots found—try another vibe!",
+                footer_copyright: "© 2025 GUPTIK. Let’s Explore Together!",
+                footer_contact_title: "Get in Touch!",
+                footer_name_placeholder: "Your Name",
+                footer_email_placeholder: "Your Email",
+                footer_submit: "Send",
+                form_message: "Thanks for reaching out!",
+                like_button: "Like",
+                unlike_button: "Unlike",
+                share_button: "Share",
+                route_button: "Show Route",
+                learn_more_button: "More",
+                fun_stuff: "Fun Stuff",
+                wow_factor: "Wow Factor",
+                distance_label: "Distance",
+                when_label: "When",
+                where_label: "Where",
+                countdown_label: "Countdown",
+                details_button: "Details",
+                you_are_here: "You are here!",
+                location_permission_denied: "Location permission denied. Please enable it and try again.",
+                location_unavailable: "Location unavailable. Showing Pune instead!",
+                location_timeout: "Location request timed out. Try again.",
+                added_to_faves: "added to faves!",
+                removed_from_faves: "removed from faves!",
+                share_text: "Check out",
+                share_on: "on Explo Maharashtra!",
+                event_happening: "It’s Happening!",
+                search_results: "Search Results",
+                tourist_destinations: [
+                    {
+                        name: "Velas Beach",
+                        description: "Chill with Beach!",
+                        attractions: ["Turtle Mohatsav"],
+                        types: ["beach"]
+                    },
+                    {
+                        name: "Shirdi",
+                        description: "Sai Baba’s spiritual haven.",
+                        attractions: ["Sai Baba Temple", "Dwarkamai Mosque"],
+                        types: ["religious", "cultural"]
+                    },
+                    {
+                        name: "AgaKhan Palace",
+                        description: "Historic palace with Gandhi’s legacy.",
+                        attractions: ["museum"],
+                        types: ["historical", "cultural"]
+                    },
+                    {
+                        name: "Amanora Mall",
+                        description: "Upscale shopping and fun in Hadapsar.",
+                        attractions: ["shopping", "dining", "gaming zone"],
+                        types: ["urban"]
+                    },
+                    {
+                        name: "Appa Balwant Chowk",
+                        description: "Bustling square near Shaniwar Wada.",
+                        attractions: ["Shaniwar Wada"],
+                        types: ["historical", "urban"]
+                    },
+                    {
+                        name: "Balaji Temple (Kondhwa)",
+                        description: "South Indian-style Venkateswara temple.",
+                        attractions: ["Lord Venkateswara temple"],
+                        types: ["religious", "cultural"]
+                    },
+                    {
+                        name: "Baneshwar Temple",
+                        description: "Serene Shiva temple by Bhima River.",
+                        attractions: ["Lord Shiva temple", "Bhima River"],
+                        types: ["religious", "nature"]
+                    },
+                    {
+                        name: "Bhide Wada",
+                        description: "Savitribai Phule’s historic girls’ school.",
+                        attractions: ["museum"],
+                        types: ["historical", "cultural"]
+                    },
+                    {
+                        name: "Bund Garden",
+                        description: "Riverside garden with historic bridge.",
+                        attractions: ["historic bridge", "boating"],
+                        types: ["nature", "urban"]
+                    },
+                    {
+                        name: "Chaturshringi Temple",
+                        description: "18th-century temple for Goddess Chaturshringi.",
+                        attractions: ["Goddess Chaturshringi temple"],
+                        types: ["religious", "cultural"]
+                    },
+                    {
+                        name: "Dagdusheth Halwai Ganpati Temple",
+                        description: "Iconic Ganesh temple during Ganeshotsav.",
+                        attractions: ["Ganesh idol"],
+                        types: ["religious", "cultural"]
+                    },
+                    {
+                        name: "Darshan Museum",
+                        description: "3D museum depicting Lord Krishna’s life.",
+                        attractions: ["3D displays"],
+                        types: ["cultural"]
+                    },
+                    {
+                        name: "Tribal Museum",
+                        description: "Showcases Maharashtra’s tribal culture.",
+                        attractions: ["tribal artifacts"],
+                        types: ["cultural"]
+                    },
+                    {
+                        name: "Rajiv Gandhi Zoological Park",
+                        description: "130-acre zoo with snake park.",
+                        attractions: ["zoo", "snake park"],
+                        types: ["nature"]
+                    }
+                ],
+                events: [
+                    {
+                        name: "Nashik Kumbh Mela",
+                        description: "Spiritual gathering by Godavari.",
+                        location: "Nashik"
+                    },
+                    {
+                        name: "Ashadi Ekadashi",
+                        description: "Hindu festival honoring Lord Vitthal with pilgrimage and devotion.",
+                        location: "Pandharpur"
+                    }
+                ]
+            },
+            hi: {
+                nav_home: "होम",
+                nav_faves: "आपके पसंदीदा",
+                nav_trending: "ट्रेंडिंग",
+                nav_recommendations: "सिफारिशें",
+                nav_events: "आयोजन",
+                nav_ai_trip_planner: "एआई ट्रिप प्लानर",
+                nav_travelo: "ट्रैवेलो",
+                nav_ai_trip_guide: "एआई ट्रिप गाइड",
+                nav_timeline_viewer: "टाइमलाइन व्यूअर",
+                nav_adventure_simulator: "एडवेंचर सिम्युलेटर",
+                hero_title: "गुप्तिक",
+                hero_subtitle: "महाराष्ट्र के छिपे रत्नों की खोज करें!",
+                search_placeholder: "अपना अगला साहसिक अनुभव खोजें...",
+                type_all: "सभी वाइब्स",
+                type_cultural: "सांस्कृतिक",
+                type_historical: "ऐतिहासिक",
+                type_religious: "धार्मिक स्थल",
+                type_nature: "प्रकृति",
+                type_adventure: "एडवेंचर जोन",
+                type_beach: "समुद्र तट",
+                type_hill_station: "हिल स्टेशन",
+                type_urban: "शहरी चहल-पहल",
+                events_title: "आगामी शानदार आयोजन!",
+                map_title: "अपने साहसिक अनुभव का नक्शा बनाएं",
+                locate_button: "मुझे ढूंढें",
+                places_title: "सभी स्थान",
+                places_hot_now: "अब लोकप्रिय",
+                places_best_picks: "सर्वश्रेष्ठ चयन",
+                places_your_faves: "आपके पसंदीदा",
+                places_spots_near_you: "आपके आस-पास के स्थान",
+                places_no_spots: "कोई स्थान नहीं मिला—कोई और वाइब आज़माएं!",
+                footer_copyright: "© 2025 गुप्तिक। आइए एक साथ खोज करें!",
+                footer_contact_title: "संपर्क में रहें!",
+                footer_name_placeholder: "आपका नाम",
+                footer_email_placeholder: "आपका ईमेल",
+                footer_submit: "भेजें",
+                form_message: "संपर्क करने के लिए धन्यवाद!",
+                like_button: "पसंद करें",
+                unlike_button: "अनपसंद करें",
+                share_button: "साझा करें",
+                route_button: "मार्ग दिखाएं",
+                learn_more_button: "अधिक",
+                fun_stuff: "मजेदार चीजें",
+                wow_factor: "वाह कारक",
+                distance_label: "दूरी",
+                when_label: "कब",
+                where_label: "कहाँ",
+                countdown_label: "उलटी गिनती",
+                details_button: "विवरण",
+                you_are_here: "आप यहाँ हैं!",
+                location_permission_denied: "स्थान अनुमति अस्वीकृत। कृपया इसे सक्षम करें और पुनः प्रयास करें।",
+                location_unavailable: "स्थान उपलब्ध नहीं। पुणे दिखा रहा है!",
+                location_timeout: "स्थान अनुरोध का समय समाप्त। पुनः प्रयास करें।",
+                added_to_faves: "पसंदीदा में जोड़ा गया!",
+                removed_from_faves: "पसंदीदा से हटाया गया!",
+                share_text: "देखें",
+                share_on: "एक्सप्लो महाराष्ट्र पर!",
+                event_happening: "यह हो रहा है!",
+                search_results: "खोज परिणाम",
+                tourist_destinations: [
+                    {
+                        name: "वेलास समुद्र तट",
+                        description: "समुद्र तट के साथ आराम करें!",
+                        attractions: ["कछुआ महोत्सव"],
+                        types: ["samudra tat"]
+                    },
+                    {
+                        name: "शिर्डी",
+                        description: "साईं बाबा का आध्यात्मिक आश्रय।",
+                        attractions: ["साईं बाबा मंदिर", "द्वारकामाई मस्जिद"],
+                        types: ["dharmik", "sanskritik"]
+                    },
+                    {
+                        name: "आगा खान पैलेस",
+                        description: "गांधी की विरासत के साथ ऐतिहासिक महल।",
+                        attractions: ["संग्रहालय"],
+                        types: ["aitihasik", "sanskritik"]
+                    },
+                    {
+                        name: "अमनोरा मॉल",
+                        description: "हडपसर में शानदार खरीदारी और मनोरंजन।",
+                        attractions: ["खरीदारी", "भोजन", "गेमिंग जोन"],
+                        types: ["shahari"]
+                    },
+                    {
+                        name: "अप्पा बलवंत चौक",
+                        description: "शनीवार वाडा के पास हलचल भरा चौक।",
+                        attractions: ["शनीवार वाडा"],
+                        types: ["aitihasik", "shahari"]
+                    },
+                    {
+                        name: "बालाजी मंदिर (कोंढवा)",
+                        description: "दक्षिण भारतीय शैली का वेंकटेश्वर मंदिर।",
+                        attractions: ["भगवान वेंकटेश्वर मंदिर"],
+                        types: ["dharmik", "sanskritik"]
+                    },
+                    {
+                        name: "बानेश्वर मंदिर",
+                        description: "भीमा नदी के किनारे शांत शिव मंदिर।",
+                        attractions: ["भगवान शिव मंदिर", "भीमा नदी"],
+                        types: ["dharmik", "prakriti"]
+                    },
+                    {
+                        name: "भिडे वाडा",
+                        description: "सावित्रीबाई फुले का ऐतिहासिक बालिका स्कूल।",
+                        attractions: ["संग्रहालय"],
+                        types: ["aitihasik", "sanskritik"]
+                    },
+                    {
+                        name: "बुंद गार्डन",
+                        description: "ऐतिहासिक पुल के साथ नदी किनारे का बगीचा।",
+                        attractions: ["ऐतिहासिक पुल", "नौकायन"],
+                        types: ["prakriti", "shahari"]
+                    },
+                    {
+                        name: "चतुर्शृंगी मंदिर",
+                        description: "18वीं सदी का देवी चतुर्शृंगी का मंदिर।",
+                        attractions: ["देवी चतुर्शृंगी मंदिर"],
+                        types: ["dharmik", "sanskritik"]
+                    },
+                    {
+                        name: "दगडूशेठ हलवाई गणपति मंदिर",
+                        description: "गणेशोत्सव के दौरान प्रतिष्ठित गणेश मंदिर।",
+                        attractions: ["गणेश मूर्ति"],
+                        types: ["dharmik", "sanskritik"]
+                    },
+                    {
+                        name: "दर्शन संग्रहालय",
+                        description: "भगवान कृष्ण के जीवन को दर्शाता 3डी संग्रहालय।",
+                        attractions: ["3डी प्रदर्शन"],
+                        types: ["sanskritik"]
+                    },
+                    {
+                        name: "आदिवासी संग्रहालय",
+                        description: "महाराष्ट्र की आदिवासी संस्कृति को प्रदर्शित करता है।",
+                        attractions: ["आदिवासी कलाकृतियाँ"],
+                        types: ["sanskritik"]
+                    },
+                    {
+                        name: "राजीव गांधी प्राणी संग्रहालय",
+                        description: "130 एकड़ का चिड़ियाघर जिसमें सर्प उद्यान शामिल है।",
+                        attractions: ["चिड़ियाघर", "सर्प उद्यान"],
+                        types: ["prakriti"]
+                    }
+                ],
+                events: [
+                    {
+                        name: "नासिक कुंभ मेला",
+                        description: "गोदावरी के किनारे आध्यात्मिक सभा।",
+                        location: "नासिक"
+                    },
+                    {
+                        name: "आषाढ़ी एकादशी",
+                        description: "भगवान विठ्ठल को समर्पित हिंदू त्योहार, जिसमें तीर्थयात्रा और भक्ति शामिल है।",
+                        location: "पंढरपुर"
+                    }
+                ]
+            },
+            mr: {
+                nav_home: "होम",
+                nav_faves: "तुमचे आवडते",
+                nav_trending: "ट्रेंडिंग",
+                nav_recommendations: "शिफारसी",
+                nav_events: "कार्यक्रम",
+                nav_ai_trip_planner: "एआय ट्रिप प्लॅनर",
+                nav_travelo: "ट्रॅव्हेलो",
+                nav_ai_trip_guide: "एआय ट्रिप गाइड",
+                nav_timeline_viewer: "टाइमलाइन व्ह्यूअर",
+                nav_adventure_simulator: "अ‍ॅडव्हेंचर सिम्युलेटर",
+                hero_title: "गुप्तिक",
+                hero_subtitle: "महाराष्ट्रातील लपलेली रत्ने शोधा!",
+                search_placeholder: "तुमचे पुढील साहस शोधा...",
+                type_all: "सर्व वाइब्स",
+                type_cultural: "सांस्कृतिक",
+                type_historical: "ऐतिहासिक",
+                type_religious: "धार्मिक स्थळे",
+                type_nature: "निसर्ग",
+                type_adventure: "अ‍ॅडव्हेंचर झोन",
+                type_beach: "समुद्रकिनारा",
+                type_hill_station: "हिल स्टेशन",
+                type_urban: "शहरी गजबज",
+                events_title: "आगामी अप्रतिम कार्यक्रम!",
+                map_title: "तुमचे साहस नकाशावर टिपा",
+                locate_button: "मला शोधा",
+                places_title: "सर्व स्थळे",
+                places_hot_now: "आता लोकप्रिय",
+                places_best_picks: "सर्वोत्तम निवडी",
+                places_your_faves: "तुमचे आवडते",
+                places_spots_near_you: "तुमच्या जवळील स्थळे",
+                places_no_spots: "कोणतीही स्थळे सापडली नाहीत—दुसरे वाइब वापरून पहा!",
+                footer_copyright: "© 2025 गुप्तिक। चला एकत्र शोधूया!",
+                footer_contact_title: "संपर्कात रहा!",
+                footer_name_placeholder: "तुमचे नाव",
+                footer_email_placeholder: "तुमचा ईमेल",
+                footer_submit: "पाठवा",
+                form_message: "संपर्क केल्याबद्दल धन्यवाद!",
+                like_button: "आवडले",
+                unlike_button: "नावडले",
+                share_button: "शेअर करा",
+                route_button: "मार्ग दाखवा",
+                learn_more_button: "अधिक",
+                fun_stuff: "मजेदार गोष्टी",
+                wow_factor: "वाह फॅक्टर",
+                distance_label: "अंतर",
+                when_label: "कधी",
+                where_label: "कुठे",
+                countdown_label: "उलटगणती",
+                details_button: "तपशील",
+                you_are_here: "तुम्ही इथे आहात!",
+                location_permission_denied: "स्थान परवानगी नाकारली गेली. कृपया ती सक्षम करा आणि पुन्हा प्रयत्न करा.",
+                location_unavailable: "स्थान उपलब्ध नाही. पुणे दाखवत आहे!",
+                location_timeout: "स्थान विनंतीचा वेळ संपला. पुन्हा प्रयत्न करा.",
+                added_to_faves: "आवडत्या यादीत जोडले!",
+                removed_from_faves: "आवडत्या यादीतून काढले!",
+                share_text: "पहा",
+                share_on: "एक्सप्लो महाराष्ट्रवर!",
+                event_happening: "हा होत आहे!",
+                search_results: "शोध परिणाम",
+                tourist_destinations: [
+                    {
+                        name: "वेलास समुद्रकिनारा",
+                        description: "समुद्रकिनाऱ्यावर विश्रांती घ्या!",
+                        attractions: ["कासव मोहोत्सव"],
+                        types: ["samudrakinara"]
+                    },
+                    {
+                        name: "शिर्डी",
+                        description: "साईबाबांचे आध्यात्मिक आश्रयस्थान।",
+                        attractions: ["साईबाबा मंदिर", "द्वारकामाई मशीद"],
+                        types: ["dharmik", "sanskritik"]
+                    },
+                    {
+                        name: "आगा खान पॅलेस",
+                        description: "गांधींच्या वारसासह ऐतिहासिक महाल।",
+                        attractions: ["संग्रहालय"],
+                        types: ["aitihasik", "sanskritik"]
+                    },
+                    {
+                        name: "अमनोरा मॉल",
+                        description: "हडपसरमधील शानदार खरेदी आणि मनोरंजन।",
+                        attractions: ["खरेदी", "जेवण", "गेमिंग झोन"],
+                        types: ["shahari"]
+                    },
+                    {
+                        name: "अप्पा बळवंत चौक",
+                        description: "शनीवार वाड्याजवळील गजबजलेला चौक।",
+                        attractions: ["शनीवार वाडा"],
+                        types: ["aitihasik", "shahari"]
+                    },
+                    {
+                        name: "बालाजी मंदिर (कोंढवा)",
+                        description: "दक्षिण भारतीय शैलीतील वेंकटेश्वर मंदिर।",
+                        attractions: ["श्री वेंकटेश्वर मंदिर"],
+                        types: ["dharmik", "sanskritik"]
+                    },
+                    {
+                        name: "बानेश्वर मंदिर",
+                        description: "भीमा नदीकाठचे शांत शिव मंदिर।",
+                        attractions: ["श्री शिव मंदिर", "भीमा नदी"],
+                        types: ["dharmik", "nisarga"]
+                    },
+                    {
+                        name: "भिडे वाडा",
+                        description: "सावित्रीबाई फुले यांचा ऐतिहासिक मुलींचा शाळा।",
+                        attractions: ["संग्रहालय"],
+                        types: ["aitihasik", "sanskritik"]
+                    },
+                    {
+                        name: "बुंद गार्डन",
+                        description: "ऐतिहासिक पूलासह नदीकाठचा बाग।",
+                        attractions: ["ऐतिहासिक पूल", "नौकाविहार"],
+                        types: ["nisarga", "shahari"]
+                    },
+                    {
+                        name: "चतुर्शृंगी मंदिर",
+                        description: "18व्या शतकातील चतुर्शृंगी देवीचे मंदिर।",
+                        attractions: ["चतुर्शृंगी देवी मंदिर"],
+                        types: ["dharmik", "sanskritik"]
+                    },
+                    {
+                        name: "दगडूशेठ हलवाई गणपती मंदिर",
+                        description: "गणेशोत्सवादरम्यान प्रतिष्ठित गणपती मंदिर।",
+                        attractions: ["गणेश मूर्ती"],
+                        types: ["dharmik", "sanskritik"]
+                    },
+                    {
+                        name: "दर्शन संग्रहालय",
+                        description: "श्रीकृष्णाच्या जीवनाचे 3डी प्रदर्शन संग्रहालय।",
+                        attractions: ["3डी प्रदर्शन"],
+                        types: ["sanskritik"]
+                    },
+                    {
+                        name: "आदिवासी संग्रहालय",
+                        description: "महाराष्ट्रातील आदिवासी संस्कृतीचे प्रदर्शन।",
+                        attractions: ["आदिवासी कलाकृती"],
+                        types: ["sanskritik"]
+                    },
+                    {
+                        name: "राजीव गांधी प्राणिसंग्रहालय",
+                        description: "130 एकरांचे प्राणिसंग्रहालय आणि साप उद्यान।",
+                        attractions: ["प्राणिसंग्रहालय", "साप उद्यान"],
+                        types: ["nisarga"]
+                    }
+                ],
+                events: [
+                    {
+                        name: "नाशिक कुंभ मेळा",
+                        description: "गोदावरी काठावरील आध्यात्मिक संमेलन।",
+                        location: "नाशिक"
+                    },
+                    {
+                        name: "आषाढी एकादशी",
+                        description: "श्री विठ्ठलाला समर्पित हिंदू सण, तीर्थयात्रा आणि भक्ती सहित।",
+                        location: "पंढरपूर"
+                    }
+                ]
+            }
+        };
+
+        let currentLanguage = 'en';
+
+        // Change Language
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            document.querySelectorAll('[data-key]').forEach(element => {
+                const key = element.getAttribute('data-key');
+                if (translations[lang][key]) {
+                    if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
+                        element.placeholder = translations[lang][key];
+                    } else {
+                        element.textContent = translations[lang][key];
+                    }
+                }
+            });
+
+            // Update HTML lang attribute
+            document.documentElement.lang = lang;
+
+            // Update tourist destinations and events
+            updateDestinationsAndEvents();
+            // Re-render current section
+            const currentSection = document.querySelector('#all-places h2').textContent;
+            if (currentSection === translations[lang].places_title) showAllPlaces();
+            else if (currentSection === translations[lang].places_hot_now) showTrendingPlaces();
+            else if (currentSection === translations[lang].places_best_picks) showRecommendedPlaces();
+            else if (currentSection === translations[lang].places_your_faves) showLikedPlaces();
+            else if (currentSection === translations[lang].places_spots_near_you) locateUser();
+            else {
+                const type = Object.keys(translations[lang]).find(key => translations[lang][key] === currentSection.split(' ')[0]);
+                if (type && type.startsWith('type_')) {
+                    filterByTourismType(type.replace('type_', ''));
+                } else {
+                    showAllPlaces();
+                }
+            }
+        }
+
+        // Update Destinations and Events with Translations
+        function updateDestinationsAndEvents() {
+            touristDestinations.forEach((dest, index) => {
+                const translation = translations[currentLanguage].tourist_destinations[index];
+                dest.name = translation.name;
+                dest.description = translation.description;
+                dest.attractions = translation.attractions;
+                dest.types = translation.types;
+            });
+            upcomingEvents.forEach((event, index) => {
+                const translation = translations[currentLanguage].events[index];
+                event.name = translation.name;
+                event.description = translation.description;
+                event.location = translation.location;
+            });
+        }
+
+        const touristDestinations = [
+            {
+                name: "Velas Beach",
+                coordinates: [17.9588, 73.0361],
+                description: "Chill with Beach!",
+                attractions: ["Turtle Mohatsav"],
+                types: ["beach"],
+                trending: true,
+                recommended: true,
+                rating: 4.9,
+                image: "https://images.pexels.com/photos/3601453/pexels-photo-3601453.jpeg?auto=compress&cs=tinysrgb&w=2048",
+                learnMoreLink: "velas.html",
+                panorama: "https://images.pexels.com/photos/3601453/pexels-photo-3601453.jpeg?auto=compress&cs=tinysrgb&w=2048"
+            },
+            {
+                name: "Shirdi",
+                coordinates: [19.7645, 74.4762],
+                description: "Sai Baba’s spiritual haven.",
+                attractions: ["Sai Baba Temple", "Dwarkamai Mosque"],
+                types: ["religious", "cultural"],
+                trending: true,
+                recommended: false,
+                rating: 4.9,
+                image: "shirdi.jpg",
+                learnMoreLink: "https://raigadfortnamaskarmaharashtraindiaexplo.my.canva.site/shirdisaibaba"
+            },
+            {
+                name: "AgaKhan Palace",
+                coordinates: [18.5526, 73.9015],
+                description: "Historic palace with Gandhi’s legacy.",
+                attractions: ["museum"],
+                types: ["historical", "cultural"],
+                trending: false,
+                recommended: true,
+                rating: 4.0,
+                image: "agakhan.jpg",
+                learnMoreLink: "https://onecompiler.com/html/43eb9avv6"
+            },
+            {
+                name: "Amanora Mall",
+                coordinates: [18.489, 73.935],
+                description: "Upscale shopping and fun in Hadapsar.",
+                attractions: ["shopping", "dining", "gaming zone"],
+                types: ["urban"],
+                trending: true,
+                recommended: false,
+                rating: 4.5,
+                image: "mallama.jpg",
+                learnMoreLink: null
+            },
+            {
+                name: "Appa Balwant Chowk",
+                coordinates: [18.517, 73.857],
+                description: "Bustling square near Shaniwar Wada.",
+                attractions: ["Shaniwar Wada"],
+                types: ["historical", "urban"],
+                trending: false,
+                recommended: true,
+                rating: 3.8,
+                image: "abcchowkpune.jpg",
+                learnMoreLink: null
+            },
+            {
+                name: "Balaji Temple (Kondhwa)",
+                coordinates: [18.458, 73.896],
+                description: "South Indian-style Venkateswara temple.",
+                attractions: ["Lord Venkateswara temple"],
+                types: ["religious", "cultural"],
+                trending: false,
+                recommended: true,
+                rating: 4.2,
+                image: "balajimandir.jpg",
+                learnMoreLink: null
+            },
+            {
+                name: "Baneshwar Temple",
+                coordinates: [18.465, 73.808],
+                description: "Serene Shiva temple by Bhima River.",
+                attractions: ["Lord Shiva temple", "Bhima River"],
+                types: ["religious", "nature"],
+                trending: false,
+                recommended: true,
+                rating: 4.0,
+                image: "baneshwar1.jpg",
+                learnMoreLink: null
+            },
+            {
+                name: "Bhide Wada",
+                coordinates: [18.515, 73.856],
+                description: "Savitribai Phule’s historic girls’ school.",
+                attractions: ["museum"],
+                types: ["historical", "cultural"],
+                trending: false,
+                recommended: true,
+                rating: 3.9,
+                image: "bhide.jpg",
+                learnMoreLink: null
+            },
+            {
+                name: "Bund Garden",
+                coordinates: [18.5421, 73.8816],
+                description: "Riverside garden with historic bridge.",
+                attractions: ["historic bridge", "boating"],
+                types: ["nature", "urban"],
+                trending: false,
+                recommended: true,
+                rating: 4.1,
+                image: "bund.jpg",
+                learnMoreLink: null
+            },
+            {
+                name: "Chaturshringi Temple",
+                coordinates: [18.5391, 73.8284],
+                description: "18th-century temple for Goddess Chaturshringi.",
+                attractions: ["Goddess Chaturshringi temple"],
+                types: ["religious", "cultural"],
+                trending: true,
+                recommended: false,
+                rating: 4.6,
+                image: "chaturshringitemple.jpg",
+                learnMoreLink: null
+            },
+            {
+                name: "Dagdusheth Halwai Ganpati Temple",
+                coordinates: [18.5164, 73.8561],
+                description: "Iconic Ganesh temple during Ganeshotsav.",
+                attractions: ["Ganesh idol"],
+                types: ["religious", "cultural"],
+                trending: true,
+                recommended: false,
+                rating: 4.8,
+                image: "dagdusheth.jpg",
+                learnMoreLink: null
+            },
+            {
+                name: "Darshan Museum",
+                coordinates: [18.52, 73.85],
+                description: "3D museum depicting Lord Krishna’s life.",
+                attractions: ["3D displays"],
+                types: ["cultural"],
+                trending: false,
+                recommended: true,
+                rating: 4.0,
+                image: "About.jpg",
+                learnMoreLink: null
+            },
+            {
+                name: "Tribal Museum",
+                coordinates: [18.518, 73.843],
+                description: "Showcases Maharashtra’s tribal culture.",
+                attractions: ["tribal artifacts"],
+                types: ["cultural"],
+                trending: false,
+                recommended: true,
+                rating: 3.9,
+                image: "download.jpg",
+                learnMoreLink: null
+            },
+            {
+                name: "Rajiv Gandhi Zoological Park",
+                coordinates: [18.452, 73.8565],
+                description: "130-acre zoo with snake park.",
+                attractions: ["zoo", "snake park"],
+                types: ["nature"],
+                trending: true,
+                recommended: false,
+                rating: 4.3,
+                image: "rajivgandhizoo.jpg",
+                learnMoreLink: null
+            }
+        ];
+
+        const upcomingEvents = [
+            {
+                name: "Nashik Kumbh Mela",
+                date: new Date("2025-08-15"),
+                location: "Nashik",
+                coordinates: [20.0059, 73.791],
+                description: "Spiritual gathering by Godavari.",
+                image: "kumbh.jpg",
+                learnMoreLink: null
+            },
+            {
+                name: "Ashadi Ekadashi",
+                date: new Date("2025-07-11"),
+                location: "Pandharpur",
+                coordinates: [17.6766, 75.3307],
+                description: "Hindu festival honoring Lord Vitthal with pilgrimage and devotion.",
+                image: "pandharpur.jpg",
+                learnMoreLink: null
+            }
+        ];
+
+        let likedPlaces = JSON.parse(localStorage.getItem('likedPlaces')) || [];
+        let currentRoute = null;
+        let userLocation = null;
+        let map;
+
+        function initializeMap() {
+            console.log("Initializing map...");
+            const mapContainer = document.getElementById('map');
+            if (!mapContainer) {
+                console.error("Map container not found!");
+                return;
+            }
+
+            map = L.map('map', {
+                center: [19.7515, 75.7139],
+                zoom: 7,
+                zoomControl: true
+            });
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 100);
+
+            console.log("Map initialized successfully");
+            updateMapMarkers(touristDestinations);
+        }
+
+        function updateMapMarkers(destinations) {
+            if (!map) {
+                console.error("Map not initialized!");
+                return;
+            }
+            console.log("Updating map markers for", destinations.length, "destinations");
+            map.eachLayer(layer => {
+                if (layer instanceof L.Marker && layer !== (currentRoute?.getWaypoints()[0]?.marker)) {
+                    map.removeLayer(layer);
+                }
+            });
+            destinations.forEach(dest => {
+                try {
+                    if (dest.coordinates && Array.isArray(dest.coordinates) && dest.coordinates.length === 2) {
+                        L.marker([dest.coordinates[0], dest.coordinates[1]])
+                            .addTo(map)
+                            .bindPopup(`<b>${dest.name}</b><br>${dest.description}${dest.distance !== undefined ? `<br><b>${translations[currentLanguage].distance_label}:</b> ${dest.distance.toFixed(1)} km` : ''}`);
+                    } else {
+                        console.warn(`Invalid coordinates for ${dest.name}`);
+                    }
+                } catch (error) {
+                    console.error(`Error adding marker for ${dest.name}:`, error);
+                }
+            });
+            map.invalidateSize();
+        }
+
+        function showRoute(destinationName) {
+            const dest = touristDestinations.find(d => d.name === translations[currentLanguage].tourist_destinations[touristDestinations.findIndex(td => td.name === d.name)].name);
+            if (!dest || !dest.coordinates) {
+                alert("Cannot show route: Invalid destination.");
+                return;
+            }
+
+            if (currentRoute) {
+                map.removeControl(currentRoute);
+                currentRoute = null;
+            }
+
+            const startPoint = userLocation ? [userLocation.lat, userLocation.lng] : [18.5204, 73.8567];
+
+            currentRoute = L.Routing.control({
+                waypoints: [
+                    L.latLng(startPoint[0], startPoint[1]),
+                    L.latLng(dest.coordinates[0], dest.coordinates[1])
+                ],
+                routeWhileDragging: true,
+                show: true,
+                addWaypoints: false,
+                fitSelectedRoutes: true,
+                showAlternatives: false,
+                lineOptions: {
+                    styles: [{ color: '#ff6200', weight: 4 }]
+                }
+            }).addTo(map);
+
+            map.setView(dest.coordinates, 10);
+            map.invalidateSize();
+        }
+
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        function locateUser() {
+            console.log("Attempting to locate user...");
+            if (!navigator.geolocation) {
+                alert(translations[currentLanguage].places_no_spots);
+                console.warn("Geolocation not supported");
+                map.setView([18.5204, 73.8567], 10);
+                showAllPlaces();
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    const userLat = position.coords.latitude;
+                    const userLon = position.coords.longitude;
+                    console.log("Location found: [" + userLat + ", " + userLon + "]");
+                    userLocation = { lat: userLat, lng: userLon };
+
+                    map.eachLayer(layer => {
+                        if (layer instanceof L.Marker && layer.getPopup()?.getContent() === translations[currentLanguage].you_are_here) {
+                            map.removeLayer(layer);
+                        }
+                    });
+
+                    L.marker([userLat, userLon])
+                        .addTo(map)
+                        .bindPopup(translations[currentLanguage].you_are_here)
+                        .openPopup();
+                    map.setView([userLat, userLon], 12);
+
+                    const nearbyPlaces = touristDestinations
+                        .map(dest => ({
+                            ...dest,
+                            distance: getDistance(userLat, userLon, dest.coordinates[0], dest.coordinates[1])
+                        }))
+                        .filter(dest => dest.distance <= 50)
+                        .sort((a, b) => a.distance - b.distance);
+
+                    console.log("Nearby places found:", nearbyPlaces.length);
+                    document.querySelector('#all-places h2').textContent = translations[currentLanguage].places_spots_near_you;
+                    displayDestinations(nearbyPlaces.length ? nearbyPlaces : []);
+                    updateMapMarkers(nearbyPlaces);
+                },
+                error => {
+                    let errorMessage = translations[currentLanguage].places_no_spots;
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = translations[currentLanguage].location_permission_denied;
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = translations[currentLanguage].location_unavailable;
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = translations[currentLanguage].location_timeout;
+                            break;
+                    }
+                    alert(errorMessage);
+                    console.error("Geolocation error:", error.message);
+                    userLocation = null;
+                    map.setView([18.5204, 73.8567], 10);
+                    showAllPlaces();
+                },
+                { timeout: 10000, enableHighAccuracy: true }
+            );
+        }
+
+        function displayDestinations(destinations) {
+            console.log("Displaying destinations:", destinations.length);
+            const container = document.getElementById('destination-info');
+            container.innerHTML = destinations.length ? '' : `<p class="text-center text-orange-600">${translations[currentLanguage].places_no_spots}</p>`;
+            destinations.forEach(dest => {
+                const isLiked = likedPlaces.includes(dest.name);
+                const distanceInfo = dest.distance !== undefined ? `<p class="text-orange-500 text-sm"><b>${translations[currentLanguage].distance_label}:</b> ${dest.distance.toFixed(1)} km</p>` : '';
+                const card = `
+                    <div class="destination-card">
+                        <img src="${dest.image || 'https://via.placeholder.com/300x180'}" alt="${dest.name}" loading="lazy">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-orange-600">${dest.name}</h3>
+                            <p class="text-orange-600 text-sm mt-1">${dest.description}</p>
+                            <p class="text-orange-500 text-sm mt-1"><strong>${translations[currentLanguage].fun_stuff}:</strong> ${dest.attractions.join(', ')}</p>
+                            <p class="text-orange-500 text-sm"><strong>${translations[currentLanguage].wow_factor}:</strong> ${dest.rating || 'N/A'}/5</p>
+                            ${distanceInfo}
+                            <div class="mt-2 flex flex-wrap gap-1">${dest.types.map(type => `<span class="tag">${translations[currentLanguage]['type_' + type] || type}</span>`).join('')}</div>
+                            <div class="like-share-buttons">
+                                <button class="like-btn" onclick="toggleLike('${dest.name}')">${isLiked ? translations[currentLanguage].unlike_button : translations[currentLanguage].like_button}</button>
+                                <button class="share-btn" onclick="shareDestination('${dest.name}')">${translations[currentLanguage].share_button}</button>
+                                <button class="route-btn" onclick="showRoute('${dest.name}')">${translations[currentLanguage].route_button}</button>
+                                <a href="${dest.learnMoreLink || '#'}" class="learn-more-btn">${translations[currentLanguage].learn_more_button}</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+
+        function displayEvents(events) {
+            console.log("Displaying events:", events.length);
+            const container = document.getElementById('event-info');
+            container.innerHTML = '';
+            events.forEach(event => {
+                const card = `
+                    <div class="event-card">
+                        <img src="${event.image || 'https://via.placeholder.com/300x180'}" alt="${event.name}" loading="lazy">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-orange-600">${event.name}</h3>
+                            <p class="text-orange-600 text-sm mt-1">${event.description}</p>
+                            <p class="text-orange-500 text-sm mt-1"><strong>${translations[currentLanguage].when_label}:</strong> ${event.date.toDateString()}</p>
+                            <p class="text-orange-500 text-sm"><strong>${translations[currentLanguage].where_label}:</strong> ${event.location}</p>
+                            <p class="text-orange-500 text-sm mt-1"><strong>${translations[currentLanguage].countdown_label}:</strong> <span id="timer-${event.name.replace(/\s+/g, '-')}"></span></p>
+                            <div class="like-share-buttons">
+                                <a href="${event.learnMoreLink || '#'}" class="learn-more-btn">${translations[currentLanguage].details_button}</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+            updateTimers();
+        }
+
+        function updateTimers() {
+            upcomingEvents.forEach(event => {
+                const timerElement = document.getElementById(`timer-${event.name.replace(/\s+/g, '-')}`);
+                if (timerElement) {
+                    const timeLeft = event.date - new Date();
+                    if (timeLeft > 0) {
+                        const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                        timerElement.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                    } else {
+                        timerElement.textContent = translations[currentLanguage].event_happening;
+                    }
+                }
+            });
+        }
+
+        setInterval(updateTimers, 1000);
+
+        function filterDestinations(query) {
+            console.log("Filtering destinations with query:", query);
+            const filtered = touristDestinations.filter(dest =>
+                dest.name.toLowerCase().includes(query.toLowerCase()) ||
+                dest.description.toLowerCase().includes(query.toLowerCase())
+            );
+            document.querySelector('#all-places h2').textContent = translations[currentLanguage].search_results;
+            displayDestinations(filtered);
+            updateMapMarkers(filtered);
+            if (currentRoute) {
+                map.removeControl(currentRoute);
+                currentRoute = null;
+            }
+        }
+
+        function filterByTourismType(type) {
+            console.log("Filtering by tourism type:", type);
+            document.querySelectorAll('.type-btn').forEach(btn => {
+                const btnKey = btn.getAttribute('data-key');
+                btn.classList.toggle('active', translations[currentLanguage][btnKey] === (type ? translations[currentLanguage]['type_' + type] : translations[currentLanguage].type_all));
+            });
+            document.querySelector('#all-places h2').textContent = type ? translations[currentLanguage]['type_' + type] + (currentLanguage === 'en' ? ' Spots' : currentLanguage === 'hi' ? ' स्थान' : ' स्थळे') : translations[currentLanguage].places_title;
+            const filtered = type ? touristDestinations.filter(dest => dest.types.includes(type)) : touristDestinations;
+            displayDestinations(filtered);
+            updateMapMarkers(filtered);
+            if (currentRoute) {
+                map.removeControl(currentRoute);
+                currentRoute = null;
+            }
+        }
+
+        function showAllPlaces() {
+            console.log("Showing all places");
+            document.querySelector('#all-places h2').textContent = translations[currentLanguage].places_title;
+            displayDestinations(touristDestinations);
+            updateMapMarkers(touristDestinations);
+            map.setView([19.7515, 75.7139], 7);
+            map.invalidateSize();
+            if (currentRoute) {
+                map.removeControl(currentRoute);
+                currentRoute = null;
+            }
+        }
+
+        function showTrendingPlaces() {
+            console.log("Showing trending places");
+            document.querySelector('#all-places h2').textContent = translations[currentLanguage].places_hot_now;
+            const trending = touristDestinations.filter(dest => dest.trending);
+            displayDestinations(trending);
+            updateMapMarkers(trending);
+            map.setView([19.7515, 75.7139], 7);
+            map.invalidateSize();
+            if (currentRoute) {
+                map.removeControl(currentRoute);
+                currentRoute = null;
+            }
+        }
+
+        function showRecommendedPlaces() {
+            console.log("Showing recommended places");
+            document.querySelector('#all-places h2').textContent = translations[currentLanguage].places_best_picks;
+            const recommended = touristDestinations.filter(dest => dest.recommended);
+            displayDestinations(recommended);
+            updateMapMarkers(recommended);
+            map.setView([19.7515, 75.7139], 7);
+            map.invalidateSize();
+            if (currentRoute) {
+                map.removeControl(currentRoute);
+                currentRoute = null;
+            }
+        }
+
+        function showLikedPlaces() {
+            console.log("Showing liked places");
+            document.querySelector('#all-places h2').textContent = translations[currentLanguage].places_your_faves;
+            const liked = touristDestinations.filter(dest => likedPlaces.includes(dest.name));
+            displayDestinations(liked);
+            updateMapMarkers(liked);
+            map.setView([19.7515, 75.7139], 7);
+            map.invalidateSize();
+            if (currentRoute) {
+                map.removeControl(currentRoute);
+                currentRoute = null;
+            }
+        }
+
+        function showEvents() {
+            console.log("Showing events");
+            displayEvents(upcomingEvents);
+            const eventsSection = document.getElementById('events-section');
+            eventsSection.scrollIntoView({ behavior: 'smooth' });
+            eventsSection.style.transition = 'background-color 0.5s';
+            eventsSection.style.backgroundColor = '#fff3e6';
+            setTimeout(() => {
+                eventsSection.style.backgroundColor = '#ffffff';
+            }, 1000);
+            if (currentRoute) {
+                map.removeControl(currentRoute);
+                currentRoute = null;
+            }
+        }
+
+        function toggleLike(destinationName) {
+            console.log("Toggling like for:", destinationName);
+            const index = likedPlaces.indexOf(destinationName);
+            if (index === -1) {
+                likedPlaces.push(destinationName);
+                alert(`${destinationName} ${translations[currentLanguage].added_to_faves}`);
+            } else {
+                likedPlaces.splice(index, 1);
+                alert(`${destinationName} ${translations[currentLanguage].removed_from_faves}`);
+            }
+            localStorage.setItem('likedPlaces', JSON.stringify(likedPlaces));
+            const currentSection = document.querySelector('#all-places h2').textContent;
+            if (currentSection === translations[currentLanguage].places_title) showAllPlaces();
+            else if (currentSection === translations[currentLanguage].places_hot_now) showTrendingPlaces();
+            else if (currentSection === translations[currentLanguage].places_best_picks) showRecommendedPlaces();
+            else if (currentSection === translations[currentLanguage].places_your_faves) showLikedPlaces();
+            else if (currentSection === translations[currentLanguage].places_spots_near_you) locateUser();
+            else {
+                const type = Object.keys(translations[currentLanguage]).find(key => translations[currentLanguage][key] === currentSection.split(' ')[0]);
+                if (type && type.startsWith('type_')) {
+                    filterByTourismType(type.replace('type_', ''));
+                } else {
+                    showAllPlaces();
+                }
+            }
+        }
+
+        function shareDestination(destinationName) {
+            console.log("Sharing destination:", destinationName);
+            const url = window.location.href;
+            const text = `${translations[currentLanguage].share_text} ${destinationName} ${translations[currentLanguage].share_on} ${url}`;
+            if (navigator.share) {
+                navigator.share({ title: destinationName, text, url });
+            } else {
+                prompt("Copy this to share:", text);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("Starting application...");
+            initializeMap();
+            displayDestinations(touristDestinations);
+            displayEvents(upcomingEvents);
+        });
+
+        // Contact Form Handling
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            console.log("Contact form submitted");
+            document.getElementById('formMessage').textContent = translations[currentLanguage].form_message;
+            document.getElementById('formMessage').style.color = '#ff6200';
+        });
+
+        // Hamburger Menu
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>
