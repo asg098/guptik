@@ -1,0 +1,598 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maharashtra Historical Timeline</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: background-color 0.3s;
+            background-color: #FFF7ED;
+            color: #333333;
+        }
+        .bg-orange-100 { background-color: #FFF7ED; }
+        .bg-white { background-color: #FFFFFF; }
+        .bg-orange-500 { background-color: #FF4500; }
+        .bg-orange-600 { background-color: #F97316; }
+        .bg-opacity-95 { background-color: rgba(255, 255, 255, 0.95); }
+        .text-orange-500 { color: #FF4500; }
+        .text-white { color: #FFFFFF; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .items-center { align-items: center; }
+        .overflow-hidden { overflow: hidden; }
+        .absolute { position: absolute; }
+        .relative { position: relative; }
+        .fixed { position: fixed; }
+        .w-full { width: 100%; }
+        .h-screen { height: 100vh; }
+        .h-[60vh] { height: 60vh; }
+        .h-[12vh] { height: 12vh; }
+        .max-w-[80%] { max-width: 80%; }
+        .max-w-[200px] { max-width: 200px; }
+        .max-w-lg { max-width: 640px; }
+        .max-h-[80%] { max-height: 80%; }
+        .transition-all { transition: all 0.3s ease; }
+        .cursor-pointer { cursor: pointer; }
+        .cursor-zoom-in { cursor: zoom-in; }
+        .cursor-zoom-out { cursor: zoom-out; }
+        .bottom-10 { bottom: 40px; }
+        .top-5 { top: 20px; }
+        .left-5 { left: 20px; }
+        .right-5 { right: 20px; }
+        .left-1\/2 { left: 50%; }
+        .translate-x-[-50%] { transform: translateX(-50%); }
+        .w-[90%] { width: 90%; }
+        .p-2 { padding: 8px; }
+        .p-4 { padding: 16px; }
+        .py-4 { padding-top: 16px; padding-bottom: 16px; }
+        .px-4 { padding-left: 16px; padding-right: 16px; }
+        .rounded-md { border-radius: 8px; }
+        .rounded-full { border-radius: 9999px; }
+        .shadow-md { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+        .shadow-lg { box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); }
+        .hidden { display: none; }
+        .z-10 { z-index: 10; }
+        .z-20 { z-index: 20; }
+        .z-30 { z-index: 30; }
+        .z-40 { z-index: 40; }
+        .z-50 { z-index: 50; }
+        .max-w-xs { max-width: 320px; }
+        .text-center { text-align: center; }
+        .text-lg { font-size: 18px; }
+        .text-xl { font-size: 20px; }
+        .text-2xl { font-size: 24px; }
+        .text-sm { font-size: 14px; }
+        .font-semibold { font-weight: 600; }
+        .mt-2 { margin-top: 8px; }
+        .mt-4 { margin-top: 16px; }
+        .mt-8 { margin-top: 32px; }
+        .mb-4 { margin-bottom: 16px; }
+        .gap-2 { gap: 8px; }
+        .gap-4 { gap: 16px; }
+        .border { border-width: 1px; }
+        .border-orange-500 { border-color: #FF4500; }
+        .bg-gradient-to-r { background-image: linear-gradient(to right, var(--tw-gradient-stops)); }
+        .from-orange-500 { --tw-gradient-from: #FF4500; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 69, 0, 0)); }
+        .to-orange-600 { --tw-gradient-to: #F97316; }
+        .w-1 { width: 4px; }
+        .h-full { height: 100%; }
+        .cursor-ew-resize { cursor: ew-resize; }
+        .dark { background-color: #1F2937; color: #FFFFFF; }
+        .dark .bg-orange-100 { background-color: #2D3748; }
+        .dark .bg-white { background-color: #374151; }
+        .dark .bg-opacity-95 { background-color: rgba(55, 65, 81, 0.95); }
+        .dark .text-orange-500 { color: #F97316; }
+        @media (max-width: 640px) {
+            .max-w-[90%] { max-width: 90%; }
+            .max-h-[70%] { max-height: 70%; }
+            .max-w-[200px] { max-width: 160px; }
+            .text-sm { font-size: 12px; }
+            .text-lg { font-size: 16px; }
+            .text-2xl { font-size: 20px; }
+            .p-2 { padding: 6px; }
+            .control-panel { flex-direction: column; align-items: flex-start; gap: 8px; }
+        }
+        #navbar { top: 0; z-index: 40; }
+        #image-container { width: 100vw; height: 60vh; margin-top: 80px; }
+        #historical-image { transition: transform 0.3s ease; }
+        #comparison-container { display: none; width: 100vw; height: 60vh; margin-top: 80px; }
+        #comparison-image1, #comparison-image2 { max-width: 50%; max-height: 80%; position: absolute; }
+        #comparison-image1 { left: 0; clip-path: inset(0 50% 0 0); }
+        #comparison-image2 { right: 0; clip-path: inset(0 0 0 50%); }
+        #comparison-slider { position: absolute; left: 50%; top: 0; height: 100%; width: 4px; background: #FF4500; cursor: ew-resize; z-index: 30; }
+        .touch-area { position: absolute; top: 0; left: 0; width: 100%; height: 60vh; z-index: 10; }
+        .annotation { position: absolute; background: rgba(255, 255, 255, 0.95); color: #333333; padding: 6px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; z-index: 20; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        .dark .annotation { background: rgba(55, 65, 81, 0.95); color: #FFFFFF; }
+        #carousel { overflow-x: auto; white-space: nowrap; margin-top: 16px; padding: 0 48px; position: relative; }
+        .carousel-item { display: inline-block; margin-right: 12px; cursor: pointer; transition: transform 0.2s ease; }
+        .carousel-item:hover { transform: scale(1.05); }
+        .carousel-item img { border: 2px solid transparent; border-radius: 4px; }
+        .carousel-item.selected img { border-color: #FF4500; }
+        #carousel-left, #carousel-right { position: absolute; top: 50%; transform: translateY(-50%); background: #FF4500; color: #FFFFFF; padding: 10px; border-radius: 50%; cursor: pointer; z-index: 20; font-size: 16px; transition: background-color 0.2s; }
+        #carousel-left:hover, #carousel-right:hover { background: #F97316; }
+        #carousel-left { left: 8px; }
+        #carousel-right { right: 8px; }
+        #loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; color: #FF4500; display: none; z-index: 30; }
+        #search-bar { width: 200px; transition: border-color 0.2s; }
+        #search-bar:focus { outline: none; border-color: #F97316; }
+        #welcome, #timeline-page, #about { min-height: calc(100vh - 120px); }
+        footer { margin-top: 24px; }
+        #tooltip { bottom: calc(12vh + 80px); }
+        #enter-timeline { z-index: 50; cursor: pointer; transition: transform 0.2s; }
+        #enter-timeline:hover { transform: scale(1.05); }
+        .control-panel button { transition: background-color 0.2s, transform 0.1s; }
+        .control-panel button:hover { background-color: #F97316; transform: translateY(-1px); }
+        #timeline-slider::-webkit-slider-thumb { background: #FF4500; }
+        #timeline-slider::-moz-range-thumb { background: #FF4500; }
+    </style>
+</head>
+<body class="bg-orange-100">
+    <nav id="navbar" class="fixed w-full bg-white shadow-md py-4 px-4 flex justify-between items-center z-40">
+        <h1 class="text-2xl font-semibold text-orange-500">Maharashtra Historical Timeline</h1>
+        <div class="flex gap-4">
+            <a href="#welcome" class="nav-link text-orange-500 hover:text-orange-600 transition-all" aria-label="Welcome page">Welcome</a>
+            <a href="#timeline" class="nav-link text-orange-500 hover:text-orange-600 transition-all" aria-label="Timeline page">Timeline</a>
+            <a href="#about" class="nav-link text-orange-500 hover:text-orange-600 transition-all" aria-label="About page">About</a>
+        </div>
+    </nav>
+
+    <div id="welcome" class="h-screen flex flex-col justify-center items-center text-center p-4">
+        <h1 class="text-2xl font-semibold mb-4">Discover Maharashtra's Heritage</h1>
+        <p class="text-lg max-w-lg mb-8">Explore iconic landmarks through interactive timelines and vivid imagery from 1650–1850.</p>
+        <a id="enter-timeline" href="#timeline" class="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4 rounded-md shadow-lg hover:bg-orange-600 transition-all text-lg font-semibold z-50" aria-label="Enter timeline viewer">Enter Timeline Viewer</a>
+    </div>
+
+    <div id="timeline-page" class="hidden">
+        <div id="image-container" class="flex justify-center items-center overflow-hidden relative h-[60vh] mt-[80px]">
+            <img id="historical-image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Shaniwarwada_aerial_view.jpg/800px-Shaniwarwada_aerial_view.jpg" alt="Shaniwar Wada 1650" class="max-w-[80%] max-h-[80%] transition-all cursor-zoom-in" loading="lazy" aria-label="Historical image">
+            <div class="touch-area" aria-hidden="true"></div>
+            <div id="loading" class="hidden">Loading...</div>
+        </div>
+        <div id="comparison-container" class="flex justify-center items-center overflow-hidden relative h-[60vh] mt-[80px] hidden">
+            <img id="comparison-image1" src="" alt="Comparison Image 1" class="max-w-[50%] max-h-[80%] absolute" loading="lazy">
+            <img id="comparison-image2" src="" alt="Comparison Image 2" class="max-w-[50%] max-h-[80%] absolute" loading="lazy">
+            <div id="comparison-slider" role="slider" aria-label="Comparison slider"></div>
+        </div>
+        <div id="carousel" class="w-[90%] mx-auto mt-4 h-[12vh] overflow-hidden relative" role="region" aria-label="Image carousel">
+            <div id="carousel-left" class="shadow-md">◄</div>
+            <div id="carousel-right" class="shadow-md">►</div>
+        </div>
+        <div id="timeline" class="relative bottom-10 w-[90%] mx-auto">
+            <input type="range" id="timeline-slider" min="1650" max="1850" value="1650" class="w-full h-2 bg-orange-100 rounded-full cursor-pointer" aria-label="Timeline slider">
+            <div id="year-display" class="text-center text-lg font-semibold mt-2"></div>
+        </div>
+        <div id="tooltip" class="absolute bg-opacity-95 bg-white text-orange-500 p-2 rounded-md hidden z-20 max-w-[200px] text-sm shadow-md" aria-live="polite"></div>
+        <div id="info-panel" class="absolute top-[100px] right-5 bg-opacity-95 bg-white text-orange-500 p-4 rounded-md shadow-md max-w-xs z-20" role="region" aria-label="Information panel"></div>
+        <div class="control-panel absolute top-[100px] left-5 bg-opacity-95 bg-white p-4 rounded-md shadow-md flex flex-wrap gap-2 z-20">
+            <input type="text" id="search-bar" placeholder="Search places..." class="p-2 rounded-md border border-orange-500 text-sm max-w-[200px] text-orange-500" aria-label="Search places">
+            <select id="location-select" class="bg-orange-500 text-white p-2 rounded-md text-sm hover:bg-orange-600 transition-all" aria-label="Select historical place">
+                <option value="shaniwar">Shaniwar Wada</option>
+                <option value="raigad">Raigad Fort</option>
+                <option value="sinhagad">Sinhagad Fort</option>
+                <option value="pratapgad">Pratapgad Fort</option>
+                <option value="kolhapur">Kolhapur Palace</option>
+            </select>
+            <button onclick="toggleAutoPlay()" class="bg-orange-500 text-white p-2 rounded-md text-sm hover:bg-orange-600 transition-all" aria-label="Toggle auto-play">Auto-Play</button>
+            <button onclick="toggleTheme()" class="bg-orange-500 text-white p-2 rounded-md text-sm hover:bg-orange-600 transition-all" aria-label="Toggle theme">Dark Mode</button>
+            <button id="fullscreen-btn" onclick="toggleFullScreen()" class="bg-orange-500 text-white p-2 rounded-md text-sm hover:bg-orange-600 transition-all" aria-label="Toggle full screen">Full Screen</button>
+            <button id="comparison-btn" onclick="toggleComparison()" class="bg-orange-500 text-white p-2 rounded-md text-sm hover:bg-orange-600 transition-all" aria-label="Toggle comparison mode">Compare</button>
+            <button onclick="zoomImage(1.25)" class="bg-orange-500 text-white p-2 rounded-md text-sm hover:bg-orange-600 transition-all" aria-label="Zoom in">Zoom In</button>
+            <button onclick="zoomImage(1)" class="bg-orange-500 text-white p-2 rounded-md text-sm hover:bg-orange-600 transition-all" aria-label="Reset zoom">Reset Zoom</button>
+            <button onclick="downloadImage()" class="bg-orange-500 text-white p-2 rounded-md text-sm hover:bg-orange-600 transition-all" aria-label="Download image">Download</button>
+            <button onclick="shareState()" class="bg-orange-500 text-white p-2 rounded-md text-sm hover:bg-orange-600 transition-all" aria-label="Share current view">Share</button>
+            <div id="share-url" class="hidden bg-orange-100 text-orange-500 p-2 rounded-md text-sm mt-2 w-full" aria-live="polite"></div>
+        </div>
+    </div>
+
+    <div id="about" class="hidden h-screen flex flex-col justify-center items-center text-center p-4">
+        <h1 class="text-2xl font-semibold text-orange-500 mb-4">About This Project</h1>
+        <p class="text-lg max-w-lg mb-8">Discover Maharashtra’s iconic landmarks through an interactive timeline featuring vivid imagery and annotations from 1650–1850, designed for seamless exploration.</p>
+        <p class="text-sm">Created by [ATHARVA GANDHI] </p>
+    </div>
+
+    <footer class="bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4 px-4 text-center">
+        <p>Contact: history@maharashtra-timeline.com | <a href="#welcome" class="underline hover:text-orange-100 transition-all">Back to Top</a></p>
+    </footer>
+
+    <script>
+        const historicalData = {
+            shaniwar: [
+                { year: 1650, description: "Simple hill in Pune.", image: "https://via.placeholder.com/800x600?text=Shaniwar+Wada+Hill+1650", annotations: [{ x: 50, y: 50, text: "Undeveloped Hill" }] },
+                { year: 1680, description: "Early settlements around the hill.", image: "https://via.placeholder.com/800x600?text=Shaniwar+Settlements+1680", annotations: [{ x: 60, y: 40, text: "Early Village" }] },
+                { year: 1700, description: "Planning for Shaniwar Wada.", image: "https://via.placeholder.com/800x600?text=Shaniwar+Planning+1700", annotations: [{ x: 55, y: 45, text: "Planning Phase" }] },
+                { year: 1730, description: "Construction began under Bajirao I.", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Shaniwar_Wada_gate.jpg/800px-Shaniwar_Wada_gate.jpg", annotations: [{ x: 60, y: 40, text: "Main Gate" }] },
+                { year: 1732, description: "Shaniwar Wada completed.", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Shaniwarwada_aerial_view.jpg/800px-Shaniwarwada_aerial_view.jpg", annotations: [{ x: 70, y: 30, text: "Completed Palace" }] },
+                { year: 1750, description: "Peshwa residence in its prime.", image: "https://via.placeholder.com/800x600?text=Shaniwar+Prime+1750", annotations: [{ x: 65, y: 35, text: "Royal Quarters" }] },
+                { year: 1780, description: "Expansion of Shaniwar Wada.", image: "https://via.placeholder.com/800x600?text=Shaniwar+Expansion+1780", annotations: [{ x: 50, y: 50, text: "New Wings" }] },
+                { year: 1800, description: "Decline under later Peshwas.", image: "https://via.placeholder.com/800x600?text=Shaniwar+Decline+1800", annotations: [{ x: 55, y: 45, text: "Aging Structure" }] },
+                { year: 1828, description: "Fire devastated Shaniwar Wada.", image: "https://via.placeholder.com/800x600?text=Shaniwar+Fire+1828", annotations: [{ x: 60, y: 40, text: "Burned Section" }] },
+                { year: 1850, description: "Shaniwar Wada in ruins.", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Shaniwarwada_ruins.jpg/800px-Shaniwarwada_ruins.jpg", annotations: [{ x: 65, y: 35, text: "Ruined Walls" }] }
+            ],
+            raigad: [
+                { year: 1650, description: "Fort used by local rulers.", image: "https://via.placeholder.com/800x600?text=Raigad+Fort+1650", annotations: [{ x: 50, y: 50, text: "Early Fort" }] },
+                { year: 1660, description: "Shivaji's early control.", image: "https://via.placeholder.com/800x600?text=Raigad+Shivaji+1660", annotations: [{ x: 60, y: 40, text: "Fortification" }] },
+                { year: 1670, description: "Raigad as Maratha capital.", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Raigad_Fort.jpg/800px-Raigad_Fort.jpg", annotations: [{ x: 70, y: 30, text: "Main Fort" }] },
+                { year: 1680, description: "Fort at its peak.", image: "https://via.placeholder.com/800x600?text=Raigad+Peak+1680", annotations: [{ x: 55, y: 45, text: "Royal Court" }] },
+                { year: 1689, description: "Mughal capture of Raigad.", image: "https://via.placeholder.com/800x600?text=Raigad+Mughal+1689", annotations: [{ x: 60, y: 40, text: "Mughal Occupation" }] },
+                { year: 1700, description: "Post-Mughal decline.", image: "https://via.placeholder.com/800x600?text=Raigad+Decline+1700", annotations: [{ x: 65, y: 35, text: "Damaged Walls" }] },
+                { year: 1750, description: "Partial restoration attempts.", image: "https://via.placeholder.com/800x600?text=Raigad+Restoration+1750", annotations: [{ x: 50, y: 50, text: "Restored Gate" }] },
+                { year: 1800, description: "Fort under Maratha control.", image: "https://via.placeholder.com/800x600?text=Raigad+Maratha+1800", annotations: [{ x: 55, y: 45, text: "Maratha Reclaim" }] },
+                { year: 1818, description: "British capture of Raigad.", image: "https://via.placeholder.com/800x600?text=Raigad+British+1818", annotations: [{ x: 60, y: 40, text: "British Control" }] },
+                { year: 1850, description: "Raigad as historical monument.", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Raigad_fort_ruins.jpg/800px-Raigad_fort_ruins.jpg", annotations: [{ x: 65, y: 35, text: "Ruins" }] }
+            ],
+            sinhagad: [
+                { year: 1650, description: "Early fort structure.", image: "https://via.placeholder.com/800x600?text=Sinhagad+1650", annotations: [{ x: 50, y: 50, text: "Old Fort" }] },
+                { year: 1670, description: "Captured by Tanaji Malusare.", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Sinhagad_Fort.jpg/800px-Sinhagad_Fort.jpg", annotations: [{ x: 60, y: 40, text: "Main Gate" }] },
+                { year: 1700, description: "Fort strengthened.", image: "https://via.placeholder.com/800x600?text=Sinhagad+1700", annotations: [{ x: 55, y: 45, text: "Fortifications" }] },
+                { year: 1720, description: "Maratha control.", image: "https://via.placeholder.com/800x600?text=Sinhagad+1720", annotations: [{ x: 65, y: 35, text: "Maratha Base" }] },
+                { year: 1750, description: "Active military use.", image: "https://via.placeholder.com/800x600?text=Sinhagad+1750", annotations: [{ x: 50, y: 50, text: "Watchtower" }] },
+                { year: 1780, description: "Minor repairs.", image: "https://via.placeholder.com/800x600?text=Sinhagad+1780", annotations: [{ x: 60, y: 40, text: "Repaired Walls" }] },
+                { year: 1800, description: "Decline in use.", image: "https://via.placeholder.com/800x600?text=Sinhagad+1800", annotations: [{ x: 55, y: 45, text: "Aging Structure" }] },
+                { year: 1820, description: "British influence.", image: "https://via.placeholder.com/800x600?text=Sinhagad+1820", annotations: [{ x: 65, y: 35, text: "British Presence" }] },
+                { year: 1840, description: "Fort as historical site.", image: "https://via.placeholder.com/800x600?text=Sinhagad+1840", annotations: [{ x: 50, y: 50, text: "Ruins" }] },
+                { year: 1850, description: "Preserved monument.", image: "https://via.placeholder.com/800x600?text=Sinhagad+1850", annotations: [{ x: 60, y: 40, text: "Historical Site" }] }
+            ],
+            pratapgad: [
+                { year: 1650, description: "Pre-construction phase.", image: "https://via.placeholder.com/800x600?text=Pratapgad+1650", annotations: [{ x: 50, y: 50, text: "Hill Area" }] },
+                { year: 1656, description: "Construction by Shivaji.", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Pratapgad_Fort.jpg/800px-Pratapgad_Fort.jpg", annotations: [{ x: 60, y: 40, text: "Main Fort" }] },
+                { year: 1700, description: "Fort strengthened.", image: "https://via.placeholder.com/800x600?text=Pratapgad+1700", annotations: [{ x: 55, y: 45, text: "Fortifications" }] },
+                { year: 1720, description: "Maratha stronghold.", image: "https://via.placeholder.com/800x600?text=Pratapgad+1720", annotations: [{ x: 65, y: 35, text: "Maratha Base" }] },
+                { year: 1750, description: "Active military use.", image: "https://via.placeholder.com/800x600?text=Pratapgad+1750", annotations: [{ x: 50, y: 50, text: "Watchtower" }] },
+                { year: 1780, description: "Minor repairs.", image: "https://via.placeholder.com/800x600?text=Pratapgad+1780", annotations: [{ x: 60, y: 40, text: "Repaired Walls" }] },
+                { year: 1800, description: "Decline in use.", image: "https://via.placeholder.com/800x600?text=Pratapgad+1800", annotations: [{ x: 55, y: 45, text: "Aging Structure" }] },
+                { year: 1820, description: "British influence.", image: "https://via.placeholder.com/800x600?text=Pratapgad+1820", annotations: [{ x: 65, y: 35, text: "British Presence" }] },
+                { year: 1840, description: "Fort as historical site.", image: "https://via.placeholder.com/800x600?text=Pratapgad+1840", annotations: [{ x: 50, y: 50, text: "Ruins" }] },
+                { year: 1850, description: "Preserved monument.", image: "https://via.placeholder.com/800x600?text=Pratapgad+1850", annotations: [{ x: 60, y: 40, text: "Historical Site" }] }
+            ],
+            kolhapur: [
+                { year: 1650, description: "Early palace structure.", image: "https://via.placeholder.com/800x600?text=Kolhapur+1650", annotations: [{ x: 50, y: 50, text: "Old Palace" }] },
+                { year: 1680, description: "Expansion under Shivaji.", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/New_Palace_Kolhapur.jpg/800px-New_Palace_Kolhapur.jpg", annotations: [{ x: 60, y: 40, text: "Main Hall" }] },
+                { year: 1700, description: "Palace strengthened.", image: "https://via.placeholder.com/800x600?text=Kolhapur+1700", annotations: [{ x: 55, y: 45, text: "Fortifications" }] },
+                { year: 1720, description: "Royal residence.", image: "https://via.placeholder.com/800x600?text=Kolhapur+1720", annotations: [{ x: 65, y: 35, text: "Royal Quarters" }] },
+                { year: 1750, description: "Cultural hub.", image: "https://via.placeholder.com/800x600?text=Kolhapur+1750", annotations: [{ x: 50, y: 50, text: "Cultural Center" }] },
+                { year: 1780, description: "Minor expansions.", image: "https://via.placeholder.com/800x600?text=Kolhapur+1780", annotations: [{ x: 60, y: 40, text: "New Wings" }] },
+                { year: 1800, description: "Decline in prominence.", image: "https://via.placeholder.com/800x600?text=Kolhapur+1800", annotations: [{ x: 55, y: 45, text: "Aging Structure" }] },
+                { year: 1820, description: "British influence.", image: "https://via.placeholder.com/800x600?text=Kolhapur+1820", annotations: [{ x: 65, y: 35, text: "British Presence" }] },
+                { year: 1840, description: "Palace as historical site.", image: "https://via.placeholder.com/800x600?text=Kolhapur+1840", annotations: [{ x: 50, y: 50, text: "Historical Site" }] },
+                { year: 1850, description: "Preserved monument.", image: "https://via.placeholder.com/800x600?text=Kolhapur+1850", annotations: [{ x: 60, y: 40, text: "Museum Area" }] }
+            ]
+        };
+
+        let currentLocation = 'shaniwar';
+        let isAutoPlaying = false;
+        let isComparisonMode = false;
+        let zoomLevel = 1;
+        let autoPlayInterval = null;
+        const pages = {
+            welcome: document.getElementById('welcome'),
+            timeline: document.getElementById('timeline-page'),
+            about: document.getElementById('about')
+        };
+        const imageContainer = document.getElementById('image-container');
+        const comparisonContainer = document.getElementById('comparison-container');
+        const imageElement = document.getElementById('historical-image');
+        const comparisonImage1 = document.getElementById('comparison-image1');
+        const comparisonImage2 = document.getElementById('comparison-image2');
+        const comparisonSlider = document.getElementById('comparison-slider');
+        const slider = document.getElementById('timeline-slider');
+        const yearDisplay = document.getElementById('year-display');
+        const tooltip = document.getElementById('tooltip');
+        const infoPanel = document.getElementById('info-panel');
+        const shareUrl = document.getElementById('share-url');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const comparisonBtn = document.getElementById('comparison-btn');
+        const locationSelect = document.getElementById('location-select');
+        const searchBar = document.getElementById('search-bar');
+        const carousel = document.getElementById('carousel');
+        const carouselLeft = document.getElementById('carousel-left');
+        const carouselRight = document.getElementById('carousel-right');
+        const loading = document.getElementById('loading');
+        const touchArea = document.querySelector('.touch-area');
+        const enterTimeline = document.getElementById('enter-timeline');
+
+        // Initialize button
+        enterTimeline.addEventListener('click', (e) => {
+            e.preventDefault();
+            gsap.to(pages.welcome, { opacity: 0, duration: 0.3, onComplete: () => navigateTo('timeline') });
+        });
+
+        // Navigation
+        function navigateTo(page) {
+            try {
+                Object.values(pages).forEach(p => p.classList.add('hidden'));
+                pages[page].classList.remove('hidden');
+                gsap.fromTo(pages[page], { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5 });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                if (page === 'timeline') {
+                    updateTimeline(currentLocation, parseInt(slider.value));
+                    preloadImages(currentLocation);
+                    updateCarousel();
+                }
+            } catch (e) {
+                console.error('Navigation error:', e);
+            }
+        }
+
+        // Preload images
+        function preloadImages(location) {
+            historicalData[location].forEach(data => {
+                const img = new Image();
+                img.src = data.image;
+            });
+        }
+
+        // Update timeline
+        function updateTimeline(location, year) {
+            try {
+                const data = historicalData[location].reduce((prev, curr) => 
+                    Math.abs(curr.year - year) < Math.abs(prev.year - year) ? curr : prev);
+                loading.classList.remove('hidden');
+                gsap.to(imageElement, {
+                    opacity: 0,
+                    duration: 0.2,
+                    onComplete: () => {
+                        imageElement.src = data.image;
+                        imageElement.alt = `${location} ${data.year}`;
+                        yearDisplay.textContent = `${data.year} - ${location.charAt(0).toUpperCase() + location.slice(1)}`;
+                        infoPanel.innerHTML = `<p class="text-sm">${data.description}</p>`;
+                        gsap.to(imageElement, { opacity: 1, duration: 0.3 });
+                        updateAnnotations(data.annotations);
+                        updateCarouselSelection(data.year);
+                        loading.classList.add('hidden');
+                    }
+                });
+            } catch (e) {
+                console.error('Timeline update error:', e);
+                loading.classList.add('hidden');
+            }
+        }
+
+        // Update annotations
+        function updateAnnotations(annotations) {
+            document.querySelectorAll('.annotation').forEach(el => el.remove());
+            annotations.forEach(ann => {
+                const div = document.createElement('div');
+                div.className = 'annotation';
+                div.style.left = `${ann.x}%`;
+                div.style.top = `${ann.y}%`;
+                div.textContent = ann.text;
+                div.addEventListener('click', () => {
+                    tooltip.style.left = `${ann.x}%`;
+                    tooltip.style.top = `${ann.y + 10}%`;
+                    tooltip.textContent = ann.text;
+                    gsap.fromTo(tooltip, { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.3, onComplete: () => {
+                        setTimeout(() => gsap.to(tooltip, { opacity: 0, scale: 0.8, duration: 0.3, onComplete: () => tooltip.classList.add('hidden') }), 3000);
+                    } });
+                    tooltip.classList.remove('hidden');
+                });
+                imageContainer.appendChild(div);
+            });
+        }
+
+        // Update carousel
+        function updateCarousel() {
+            carousel.innerHTML = '';
+            historicalData[currentLocation].forEach(data => {
+                const div = document.createElement('div');
+                div.className = 'carousel-item';
+                div.innerHTML = `<img src="${data.image}" alt="${currentLocation} ${data.year}" width="100" height="60">`;
+                div.addEventListener('click', () => {
+                    slider.value = data.year;
+                    updateTimeline(currentLocation, data.year);
+                });
+                carousel.appendChild(div);
+            });
+            updateCarouselSelection(parseInt(slider.value));
+        }
+
+        function updateCarouselSelection(year) {
+            document.querySelectorAll('.carousel-item').forEach(item => {
+                item.classList.remove('selected');
+                if (parseInt(item.querySelector('img').alt.match(/\d+$/)[0]) === year) {
+                    item.classList.add('selected');
+                    item.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+                }
+            });
+        }
+
+        // Event listeners
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateTo(e.target.getAttribute('href').slice(1));
+            });
+        });
+
+        slider.addEventListener('input', () => {
+            updateTimeline(currentLocation, parseInt(slider.value));
+        });
+
+        locationSelect.addEventListener('change', (e) => {
+            currentLocation = e.target.value;
+            updateTimeline(currentLocation, parseInt(slider.value));
+            updateCarousel();
+        });
+
+        searchBar.addEventListener('input', (e) => {
+            const search = e.target.value.toLowerCase();
+            const options = locationSelect.options;
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].text.toLowerCase().includes(search)) {
+                    locationSelect.value = options[i].value;
+                    currentLocation = options[i].value;
+                    updateTimeline(currentLocation, parseInt(slider.value));
+                    updateCarousel();
+                    break;
+                }
+            }
+        });
+
+        // Carousel navigation
+        carouselLeft.addEventListener('click', () => {
+            carousel.scrollBy({ left: -120, behavior: 'smooth' });
+        });
+
+        carouselRight.addEventListener('click', () => {
+            carousel.scrollBy({ left: 120, behavior: 'smooth' });
+        });
+
+        // Touch gestures
+        let touchStartX = 0;
+        touchArea.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        });
+
+        touchArea.addEventListener('touchmove', (e) => {
+            const deltaX = e.touches[0].clientX - touchStartX;
+            if (Math.abs(deltaX) > 50) {
+                const currentYear = parseInt(slider.value);
+                const years = historicalData[currentLocation].map(d => d.year);
+                const nextYear = deltaX < 0 ? 
+                    years.find(y => y > currentYear) || currentYear :
+                    years.reverse().find(y => y < currentYear) || currentYear;
+                slider.value = nextYear;
+                updateTimeline(currentLocation, nextYear);
+                touchStartX = e.touches[0].clientX;
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            const years = historicalData[currentLocation].map(d => d.year).sort((a, b) => a - b);
+            let currentYear = parseInt(slider.value);
+            if (e.key === 'ArrowRight' && currentYear < years[years.length - 1]) {
+                currentYear = years.find(y => y > currentYear) || currentYear;
+                slider.value = currentYear;
+                updateTimeline(currentLocation, currentYear);
+            } else if (e.key === 'ArrowLeft' && currentYear > years[0]) {
+                currentYear = years.reverse().find(y => y < currentYear) || currentYear;
+                slider.value = currentYear;
+                updateTimeline(currentLocation, currentYear);
+            }
+        });
+
+        // Auto-play
+        function toggleAutoPlay() {
+            isAutoPlaying = !isAutoPlaying;
+            if (isAutoPlaying) {
+                autoPlayInterval = setInterval(() => {
+                    const years = historicalData[currentLocation].map(d => d.year).sort((a, b) => a - b);
+                    let currentYear = parseInt(slider.value);
+                    const nextYear = years.find(y => y > currentYear) || years[0];
+                    slider.value = nextYear;
+                    updateTimeline(currentLocation, nextYear);
+                }, 3000);
+            } else {
+                clearInterval(autoPlayInterval);
+            }
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            gsap.to('body', { backgroundColor: isDark ? '#1F2937' : '#FFF7ED', duration: 0.3 });
+            document.querySelectorAll('.control-panel button').forEach(btn => {
+                btn.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+            });
+        }
+
+        // Full-screen
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.error('Fullscreen error:', err));
+                fullscreenBtn.textContent = 'Exit Full Screen';
+            } else {
+                document.exitFullscreen();
+                fullscreenBtn.textContent = 'Full Screen';
+            }
+        }
+
+        // Comparison mode
+        function toggleComparison() {
+            isComparisonMode = !isComparisonMode;
+            comparisonBtn.textContent = isComparisonMode ? 'Exit Compare' : 'Compare';
+            gsap.to(imageContainer, { opacity: isComparisonMode ? 0 : 1, duration: 0.3 });
+            gsap.to(comparisonContainer, { opacity: isComparisonMode ? 1 : 0, duration: 0.3, onComplete: () => {
+                imageContainer.classList.toggle('hidden', isComparisonMode);
+                comparisonContainer.classList.toggle('hidden', !isComparisonMode);
+            } });
+            if (isComparisonMode) {
+                const years = historicalData[currentLocation].map(d => d.year);
+                comparisonImage1.src = historicalData[currentLocation][0].image;
+                comparisonImage2.src = historicalData[currentLocation][historicalData[currentLocation].length - 1].image;
+                comparisonSlider.style.left = '50%';
+                comparisonImage1.style.clipPath = 'inset(0 50% 0 0)';
+                comparisonImage2.style.clipPath = 'inset(0 0 0 50%)';
+            }
+        }
+
+        // Comparison slider
+        let isDragging = false;
+        comparisonSlider.addEventListener('mousedown', () => isDragging = true);
+        document.addEventListener('mouseup', () => isDragging = false);
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const rect = comparisonContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+                comparisonSlider.style.left = `${percentage}%`;
+                comparisonImage1.style.clipPath = `inset(0 ${100 - percentage}% 0 0)`;
+                comparisonImage2.style.clipPath = `inset(0 0 0 ${percentage}%)`;
+            }
+        });
+
+        // Zoom
+        function zoomImage(scale) {
+            zoomLevel = scale;
+            gsap.to(imageElement, { scale: zoomLevel, duration: 0.3 });
+            imageElement.classList.toggle('cursor-zoom-in', zoomLevel < 1.5);
+            imageElement.classList.toggle('cursor-zoom-out', zoomLevel >= 1.5);
+        }
+
+        // Download
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.href = imageElement.src;
+            link.download = `${currentLocation}_${slider.value}.jpg`;
+            link.click();
+        }
+
+        // Share
+        function shareState() {
+            const url = `${window.location.origin}#timeline?location=${currentLocation}&year=${slider.value}`;
+            shareUrl.textContent = url;
+            gsap.fromTo(shareUrl, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, onComplete: () => {
+                shareUrl.classList.remove('hidden');
+                navigator.clipboard.writeText(url);
+                setTimeout(() => gsap.to(shareUrl, { opacity: 0, y: 10, duration: 0.3, onComplete: () => shareUrl.classList.add('hidden') }), 3000);
+            } });
+        }
+
+        // Initialize
+        function init() {
+            navigateTo(window.location.hash.slice(1) || 'welcome');
+            const params = new URLSearchParams(window.location.search);
+            currentLocation = params.get('location') || 'shaniwar';
+            slider.value = params.get('year') || 1650;
+            locationSelect.value = currentLocation;
+            updateTimeline(currentLocation, parseInt(slider.value));
+            updateCarousel();
+            preloadImages(currentLocation);
+        }
+
+        window.addEventListener('hashchange', () => {
+            navigateTo(window.location.hash.slice(1) || 'welcome');
+        });
+
+        init();
+    </script>
+</body>
+</html>
